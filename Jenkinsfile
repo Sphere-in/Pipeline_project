@@ -30,7 +30,7 @@ pipeline{
                 script {
                 try {
                     withCredentials([
-                    amazonWebServicesCredentials(credentialsId: 'AWS_CREDENTIALS'),
+                    AmazonWebServicesCredentialsBinding(credentialsId: 'AWS_CREDENTIALS'),
                     sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'SSH_KEY_PATH')
                 ]) {
                 dir('terraform') {
