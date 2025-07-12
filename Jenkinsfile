@@ -39,9 +39,9 @@ pipeline{
                     } 
                 }
                 catch (Exception e) {
-                    echo "Error Occur in Terraform Stage"
+                    echo "Error Occur in Terraform Stage "
                     currentBuild.result = 'Failure'
-                    error "Infrastructure Failed"
+                    error "Infrastructure Failed ${e}"
                 }
                 }
             }  
