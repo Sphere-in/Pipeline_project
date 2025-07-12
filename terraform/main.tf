@@ -47,6 +47,6 @@ resource "aws_volume_attachment" "my_attachment" {
   instance_id = aws_instance.my_instance.id
 }
 
-output "Instance_IP" {
+output "Instance_ip" {
   value = aws_instance.my_instance.public_ip
 }
