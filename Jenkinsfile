@@ -34,7 +34,7 @@ pipeline{
                         terraform plan
                         terraform apply --auto-approve
                     '''
-                } catch (Exception e) {
+                } }catch (Exception e) {
                     echo "Error Occur in Terraform Stage"
                      currentBuild.result = 'Failure'
                     error "Infrastructure Failed"
