@@ -19,7 +19,7 @@ variable "private_key_path" {
 }
 
 resource "aws_instance" "my_instance" {
-  ami           = "ami-020cba7c55df1f615"
+  ami           = "ami-042b4708b1d05f512"
   instance_type = "t3.micro"
   subnet_id = aws_default_vpc.default.id
   vpc_security_group_ids = [aws_security_group.my_security_group.id]
