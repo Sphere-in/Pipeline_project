@@ -2,12 +2,14 @@ pipeline{
     agent any
 
     stages{
+
         stage ("checkout code"){
             steps{
                 echo "Checking out code from SCM"
                 checkout scm
             }
         }
+
         stage ("Initialize Git"){
             steps{
                 echo "Initializing Git"
@@ -25,22 +27,22 @@ pipeline{
 
         stage ("Initialize Infrastructure") {
             steps{
-                try
-                {
-                withCredentials([file(credentialsId: 'ssh-key', variable: 'SSH_KEY_PATH')]) {
-                    sh '''
-                        chmod 400 $SSH_KEY_PATH
-                        export TF_VAR_private_key_path=$SSH_KEY_PATH
-                        terraform plan
-                        terraform apply --auto-approve
-                    '''
-                } }catch (Exception e) {
-                    echo "Error Occur in Terraform Stage"
-                     currentBuild.result = 'Failure'
-                    error "Infrastructure Failed"
-                    }
+                try {
+                    withCredentials([file(credentialsId: 'ssh-key', variable: 'SSH_KEY_PATH')]) {
+                        sh '''
+                            chmod 400 $SSH_KEY_PATH
+                            export TF_VAR_private_key_path=$SSH_KEY_PATH
+                            terraform plan
+                            terraform apply --auto-approve
+                        '''
+                    } 
                 }
-            }
+                catch (Exception e) {
+                    echo "Error Occur in Terraform Stage"
+                    currentBuild.result = 'Failure'
+                    error "Infrastructure Failed"
+                }
+            }  
         }
 
         stage('Configure with Ansible') {
@@ -97,6 +99,7 @@ pipeline{
                 } 
             }
         }
+
         stage ("Run"){
             steps{
                 echo "Running The application"
@@ -109,5 +112,5 @@ pipeline{
                 }
             }
         }
-    }
+}
     
