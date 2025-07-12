@@ -30,9 +30,9 @@ pipeline{
                 script {
                 try {
                     withCredentials([
-            [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS_CREDENTIALS'],
-            [sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'SSH_KEY_PATH')]
-            ]) {
+                    amazonWebServicesCredentials(credentialsId: 'AWS_CREDENTIALS'),
+                    sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'SSH_KEY_PATH')
+                ]) {
                 dir('terraform') {
                     sh '''
                         chmod 400 $SSH_KEY_PATH
