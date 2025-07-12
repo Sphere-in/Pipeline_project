@@ -30,14 +30,18 @@ pipeline{
                 script {
                 try {
                     withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'SSH_KEY_PATH', usernameVariable: 'SSH_USER')]) {
+                    dir ( 'terraform' ){
 
+                    
                         sh '''
                             chmod 400 $SSH_KEY_PATH
                             export TF_VAR_private_key_path=$SSH_KEY_PATH
+                            terraform init
                             terraform plan
                             terraform apply --auto-approve
                         '''
                     } 
+                    }
                 }
                 catch (Exception e) {
                     echo "Error Occur in Terraform Stage "
@@ -56,7 +60,6 @@ pipeline{
                         sh '''
                         chmod 400 $PEM_FILE
 
-                        # Optional: dynamic inventory script can be used
                         echo "[web]" > hosts
                         echo "$(terraform -chdir=../terraform output -raw instance_ip)" ansible_user=ec2-user ansible_ssh_private_key_file=$PEM_FILE >> hosts
                         cd /Ansible
@@ -87,7 +90,6 @@ pipeline{
                 script {
                 try{
                 sh '''
-                    cp 
                     npm install
                     npm run build
                     sudo rm -rf /var/www/myapp
