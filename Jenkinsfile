@@ -37,8 +37,6 @@ pipeline{
                     dir('terraform') {
                         sh '''
                         chmod 400 $SSH_KEY_PATH
-                        
-                        # These env vars are already injected, no need to re-export
                         terraform init
                         terraform plan -var="private_key_path=$SSH_KEY_PATH"
                         terraform apply --auto-approve -var="private_key_path=$SSH_KEY_PATH"
