@@ -40,6 +40,9 @@ pipeline{
                     ]) {
                     dir('terraform') {
                         sh '''
+                        echo "Path to key: $SSH_KEY_FILE"
+                        echo "Path to key: $AWS_ACCESS_KEY_ID"
+                        echo "Path to key: $AWS_SECRET_ACCESS_KEY"
                         cp $SSH_KEY_FILE $SSH_KEY_PATH
                         chmod 600 $SSH_KEY_PATH
 
