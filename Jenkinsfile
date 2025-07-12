@@ -27,6 +27,7 @@ pipeline{
 
         stage ("Initialize Infrastructure") {
             steps{
+                script {
                 try {
                     withCredentials([file(credentialsId: 'ssh-key', variable: 'SSH_KEY_PATH')]) {
                         sh '''
@@ -41,6 +42,7 @@ pipeline{
                     echo "Error Occur in Terraform Stage"
                     currentBuild.result = 'Failure'
                     error "Infrastructure Failed"
+                }
                 }
             }  
         }
@@ -80,8 +82,9 @@ pipeline{
         }
 
         stage ("Build"){
-            echo "Building the application"
             steps{
+            echo "Building the application"
+                script {
                 try{
                 sh '''
                     cp 
@@ -97,18 +100,21 @@ pipeline{
                     currentBuild.result = 'Failure'
                     error "Build failed"
                 } 
+                }
             }
         }
 
         stage ("Run"){
             steps{
                 echo "Running The application"
+                script{
                 try {
                     sh 'npm start'
                 } catch (Exception e){
                     echo "Run Failure: ${e.getMessage()}"
                     currentBuild.result = 'Failure'
                     error "Run failed"
+                }
                 }
             }
         }
