@@ -1,10 +1,11 @@
 pipeline{
     agent any
-
-    stages{
-          environment {
+    environment {
             SSH_KEY_PATH = "${WORKSPACE}/id_rsa"
         }
+
+    stages{
+          
 
         stage ("checkout code"){
             steps{
