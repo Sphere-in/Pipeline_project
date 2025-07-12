@@ -25,32 +25,21 @@ pipeline{
             }
         }
 
-        stage ("Initialize Infrastructure") {
-            steps{
-                script {
-                try {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'SSH_KEY_PATH', usernameVariable: 'SSH_USER')]) {
-                    dir ( 'terraform' ){
+        withCredentials([
+            [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS_CREDENTIALS']
+            ]) {
+            dir('terraform') {
+                sh '''
+                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
 
-                    
-                        sh '''
-                            chmod 400 $SSH_KEY_PATH
-                            export TF_VAR_private_key_path=$SSH_KEY_PATH
-                            terraform init
-                            terraform plan
-                            terraform apply --auto-approve
-                        '''
-                    } 
-                    }
-                }
-                catch (Exception e) {
-                    echo "Error Occur in Terraform Stage "
-                    currentBuild.result = 'Failure'
-                    error "Infrastructure Failed ${e}"
-                }
-                }
-            }  
+                    terraform init
+                    terraform plan
+                    terraform apply --auto-approve
+                '''
+            }
         }
+
 
         stage('Configure with Ansible') {
             steps {

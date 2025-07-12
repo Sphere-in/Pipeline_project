@@ -14,9 +14,10 @@ resource "aws_default_vpc" "default" {
 }
 
 variable "private_key_path" {
+  description = "Path to the SSH private key"
   type        = string
-  description = "Path to the SSH private key file"
 }
+
 resource "aws_instance" "my_instance" {
   ami           = "ami-020cba7c55df1f615"
   instance_type = "t3.micro"
