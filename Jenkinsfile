@@ -25,35 +25,35 @@ pipeline{
             }
         }
 
-        stage ("Initialize Infrastructure") {
-            steps{
+        stage("Initialize Infrastructure") {
+            steps {
                 script {
                 try {
                     withCredentials([
-                    AmazonWebServicesCredentialsBinding(credentialsId: 'AWS_CREDENTIALS'),
-                    sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'SSH_KEY_PATH')
-                ]) {
-                dir('terraform') {
-                    sh '''
+                    string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY'),
+                    sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'SSH_KEY_PATH',)
+                    ]) {
+                    dir('terraform') {
+                        sh '''
                         chmod 400 $SSH_KEY_PATH
-                        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
                         
+                        # These env vars are already injected, no need to re-export
                         terraform init
-                        terraform plan
-                        terraform apply --auto-approve
-                    '''
+                        terraform plan -var="private_key_path=$SSH_KEY_PATH"
+                        terraform apply --auto-approve -var="private_key_path=$SSH_KEY_PATH"
+                        '''
+                    }
+                    }
+                } catch (Exception e) {
+                    echo "Error Occurred in Terraform Stage"
+                    currentBuild.result = 'FAILURE'
+                    error "Infrastructure Failed: ${e}"
+                }
                 }
             }
-                }
-                catch (Exception e) {
-                    echo "Error Occur in Terraform Stage "
-                    currentBuild.result = 'Failure'
-                    error "Infrastructure Failed ${e}"
-                }
-                }
-            }  
         }
+
 
         stage('Configure with Ansible') {
             steps {
