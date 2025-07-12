@@ -25,7 +25,11 @@ pipeline{
             }
         }
 
-        withCredentials([
+        stage ("Initialize Infrastructure") {
+            steps{
+                script {
+                try {
+                    withCredentials([
             [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS_CREDENTIALS']
             ]) {
             dir('terraform') {
@@ -39,7 +43,15 @@ pipeline{
                 '''
             }
         }
-
+                }
+                catch (Exception e) {
+                    echo "Error Occur in Terraform Stage "
+                    currentBuild.result = 'Failure'
+                    error "Infrastructure Failed ${e}"
+                }
+                }
+            }  
+        }
 
         stage('Configure with Ansible') {
             steps {
