@@ -2,6 +2,9 @@ pipeline{
     agent any
 
     stages{
+          environment {
+            SSH_KEY_PATH = "${WORKSPACE}/id_rsa"
+        }
 
         stage ("checkout code"){
             steps{
@@ -32,14 +35,16 @@ pipeline{
                     withCredentials([
                     string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
                     string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY'),
-                    sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'SSH_KEY_PATH',)
+                    sshUserPrivateKey(credentialsId: 'ssh-private-key', keyFileVariable: 'SSH_KEY_FILE',)
                     ]) {
                     dir('terraform') {
                         sh '''
-                        chmod 400 $SSH_KEY_PATH
+                        cp $SSH_KEY_FILE $SSH_KEY_PATH
+                        chmod 600 $SSH_KEY_PATH
+
                         terraform init
-                        terraform plan -var="private_key_path=$SSH_KEY_PATH"
-                        terraform apply --auto-approve -var="private_key_path=$SSH_KEY_PATH"
+                        terraform plan
+                        terraform apply --auto-approve 
                         '''
                     }
                     }
