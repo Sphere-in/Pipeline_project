@@ -1,0 +1,26 @@
+---
+- name: Configure Nginx
+  hosts: web
+  become: true
+
+  tasks:
+  - name: Install Nginx
+    ansible.builtin.apt:
+      name: nginx
+      state: present
+
+  - name: Configure nginx
+    ansible.builtin.copy:
+      src: nginx.conf
+      dest: /etc/nginx/nginx.conf
+      owner: root
+      group: root
+      backup: yes
+      mode: '0644'
+  
+  - name: Restart Nginx
+    ansible.builtin.service:
+      name: nginx
+      restarted: yes
+      enabled: yes
+
