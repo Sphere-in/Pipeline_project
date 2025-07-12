@@ -29,7 +29,8 @@ pipeline{
             steps{
                 script {
                 try {
-                    withCredentials([file(credentialsId: 'ssh-key', variable: 'SSH_KEY_PATH')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'SSH_KEY_PATH', usernameVariable: 'SSH_USER')]) {
+
                         sh '''
                             chmod 400 $SSH_KEY_PATH
                             export TF_VAR_private_key_path=$SSH_KEY_PATH
@@ -49,9 +50,8 @@ pipeline{
 
         stage('Configure with Ansible') {
             steps {
-                withCredentials([
-                    file(credentialsId: 'ssh-key', variable: 'PEM_FILE')
-                    ]) {
+                withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'PEM_FILE', usernameVariable: 'SSH_USER')]) {
+
                     dir('Ansible') {
                         sh '''
                         chmod 400 $PEM_FILE
