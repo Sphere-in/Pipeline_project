@@ -36,7 +36,7 @@ pipeline{
                     withCredentials([
                     string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
                     string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY'),
-                    file(credentialsId: 'ssh-private-key', keyFileVariable: 'SSH_KEY_FILE',)
+                    file(credentialsId: 'ssh-private-key', variable: 'SSH_KEY_FILE',)
                     ]) {
                     dir('terraform') {
                         sh '''
