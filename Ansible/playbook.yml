@@ -48,7 +48,7 @@
 
   - name: Copy app files excluding node_modules using rsync
     ansible.builtin.synchronize:
-      src: ../  
+      src: ./  
       dest: /var/www/myapp/
       rsync_opts:
         - "--exclude=node_modules"

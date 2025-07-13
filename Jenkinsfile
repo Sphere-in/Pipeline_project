@@ -61,6 +61,15 @@ pipeline{
             }
         }
 
+        stage ("Copy Files to Ansible Folder"){
+            steps{
+                echo "Copying files to Ansible folder"
+                sh '''
+                cp -r webapp/* Ansible/
+                '''
+            }
+        }
+
 
         stage('Configure with Ansible') {
                 steps {
