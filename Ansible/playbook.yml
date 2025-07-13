@@ -42,16 +42,14 @@
       mode: '0755'
 
   - name: Copy app files to remote server
-    ansible.builtin.copy:
-      src: ../
-      dest: /var/www/myapp/
-      exclude: 
-        - node_modules
-        - .git
-        - terraform
-        - Jenkinsfile
-        - Ansible
-      mode: '0755'
+    ansible.builtin.synchronize:
+    src: ./  # your local app folder
+    dest: /var/www/myapp/
+    rsync_opts:
+      - "--exclude=node_modules"
+      - "--exclude=.git"
+      - "--exclude=terraform"
+      - "--exclude=Ansible"
 
   - name: Install Node.js dependencies
     ansible.builtin.command:
