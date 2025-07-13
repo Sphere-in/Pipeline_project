@@ -62,6 +62,11 @@
       cmd: npm install
       chdir: /var/www/myapp
 
+  - name: Build Node.js App
+    ansible.builtin.command:
+      cmd: npm run Build
+      chdir: /var/www/myapp
+
   - name: Start Node.js App
     ansible.builtin.command:
       cmd: npm start
