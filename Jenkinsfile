@@ -63,31 +63,30 @@ pipeline{
 
 
         stage('Configure with Ansible') {
-            steps {
-                script {
-                    try {
-                withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'PEM_FILE', usernameVariable: 'SSH_USER')]) {
+                steps {
+                    script {
+                        try {
+                            withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'PEM_FILE', usernameVariable: 'SSH_USER')]) {
 
-                    dir('Ansible') {
-                        sh '''
-                        chmod 400 $PEM_FILE
+                                dir('Ansible') {
+                                    sh '''
+                                    chmod 400 $PEM_FILE
 
-                        echo "[web]" > hosts
-                        echo "$(terraform -chdir=../terraform output -raw instance_ip)" ansible_user=$SSH_USER ansible_ssh_private_key_file=$PEM_FILE >> hosts
-                        ansible-playbook -i hosts playbook.yml -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"
-
-                        '''
+                                    echo "[web]" > hosts
+                                    echo "$(terraform -chdir=../terraform output -raw instance_ip)" ansible_user=$SSH_USER ansible_ssh_private_key_file=$PEM_FILE >> hosts
+                                    ansible-playbook -i hosts playbook.yml -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"
+                                    '''
+                                }
+                            }
+                        } 
+                        catch (Exception e) {
+                            sh 'terraform -chdir=../terraform destroy --auto-approve'
+                            echo "Error Occurred in Ansible Stage"
+                            currentBuild.result = 'FAILURE'
+                            error "Ansible Configuration Failed: ${e}"
+                        }
                     }
                 }
-                    } catch (Exception e) {
-                        sh 'terraform -chdir=../terraform destroy --auto-approve'
-                        echo "Error Occurred in Ansible Stage"
-                        currentBuild.result = 'FAILURE'
-                        error "Ansible Configuration Failed: ${e}"
-                    }
-                }
-            }
-            }
         }
 
     }
