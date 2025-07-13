@@ -71,7 +71,7 @@ pipeline{
                         chmod 400 $PEM_FILE
 
                         echo "[web]" > hosts
-                        echo "$(terraform -chdir=../terraform output -raw instance_ip)" ansible_user=ec2-user ansible_ssh_private_key_file=$PEM_FILE >> hosts
+                        echo "$(terraform -chdir=../terraform output -raw instance_ip)" ansible_user=$SSH_USER ansible_ssh_private_key_file=$PEM_FILE >> hosts
                         ansible-playbook -i hosts playbook.yml -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"
 
                         '''
