@@ -100,6 +100,7 @@ pipeline{
                 script {
                 try{
                 sh '''
+                    cd ..
                     npm install
                     npm run build
                     sudo rm -rf /var/www/myapp
