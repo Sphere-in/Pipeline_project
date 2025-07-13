@@ -18,6 +18,48 @@
       backup: yes
       mode: '0644'
   
+  - name: Add Node.js 18.x repo
+    apt_key:
+      url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+      state: present
+
+  - name: Add Node.js APT repository
+    apt_repository:
+      repo: deb https://deb.nodesource.com/node_18.x focal main
+      state: present
+      filename: nodesource
+
+  - name: Install Node.js
+    apt:
+      name: nodejs
+      state: present
+      update_cache: yes
+
+  - name: Ensure app directory exists
+    ansible.builtin.file:
+      path: /var/www/myapp
+      state: directory
+      mode: '0755'
+
+  - name: Copy app files to remote server
+    ansible.builtin.copy:
+      src: ./build/
+      dest: /var/www/myapp/
+      mode: '0755'
+
+  - name: Install Node.js dependencies
+    ansible.builtin.command:
+      cmd: npm install
+      chdir: /var/www/myapp
+
+  - name: Start Node.js App
+    ansible.builtin.command:
+      cmd: npm start
+      chdir: /var/www/myapp
+
+    
+
+
   - name: Restart Nginx
     ansible.builtin.systemd:
       name: nginx

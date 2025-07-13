@@ -64,6 +64,8 @@ pipeline{
 
         stage('Configure with Ansible') {
             steps {
+                script {
+                    try {
                 withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'PEM_FILE', usernameVariable: 'SSH_USER')]) {
 
                     dir('Ansible') {
@@ -77,61 +79,17 @@ pipeline{
                         '''
                     }
                 }
+                    } catch (Exception e) {
+                        sh 'terraform -chdir=../terraform destroy --auto-approve'
+                        echo "Error Occurred in Ansible Stage"
+                        currentBuild.result = 'FAILURE'
+                        error "Ansible Configuration Failed: ${e}"
+                    }
+                }
             }
-        }
-        
-        stage ("Install Dependencies"){
-            steps{
-                echo "Installing dependencies"
-                sh '''
-                if command -v node > /dev/null 1>&2; then
-                    echo "Node JS Installed"
-                else
-                    curl -fsSL https://raw.githubusercontent.com/mklement0/n-install/stable/bin/n-install | bash -s 22
-                    
-                fi
-                '''
             }
         }
 
-        stage ("Build"){
-            steps{
-            echo "Building the application"
-                script {
-                try{
-                sh '''
-                    pwd
-                    ls -l
-                    npm install
-                    npm run build
-                    sudo rm -rf /var/www/myapp
-                    sudo mkdir -p /var/www/myapp
-                    sudo cp -r .next public package.json /var/www/myapp/
-                    cd /var/www/myapp/
-                '''
-                } catch (Exception e){
-                    echo "Build Failure: ${e.getMessage()}"
-                    currentBuild.result = 'Failure'
-                    error "Build failed"
-                } 
-                }
-            }
-        }
-
-        stage ("Run"){
-            steps{
-                echo "Running The application"
-                script{
-                try {
-                    sh 'npm start'
-                } catch (Exception e){
-                    echo "Run Failure: ${e.getMessage()}"
-                    currentBuild.result = 'Failure'
-                    error "Run failed"
-                }
-                }
-            }
-        }
     }
 }
     
