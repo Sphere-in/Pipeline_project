@@ -35,6 +35,11 @@
       state: present
       update_cache: yes
 
+  - name: Install npm
+    ansible.builtin.apt:
+      name: npm
+      state: present
+      
   - name: Ensure app directory exists
     ansible.builtin.file:
       path: /var/www/myapp
