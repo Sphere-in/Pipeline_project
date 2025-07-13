@@ -41,15 +41,15 @@
       state: directory
       mode: '0755'
 
-  - name: Copy app files to remote server
+  - name: Copy app files excluding node_modules using rsync
     ansible.builtin.synchronize:
-    src: ./  # your local app folder
-    dest: /var/www/myapp/
-    rsync_opts:
-      - "--exclude=node_modules"
-      - "--exclude=.git"
-      - "--exclude=terraform"
-      - "--exclude=Ansible"
+      src: ./  
+      dest: /var/www/myapp/
+      rsync_opts:
+        - "--exclude=node_modules"
+        - "--exclude=.git"
+        - "--exclude=.env"
+
 
   - name: Install Node.js dependencies
     ansible.builtin.command:
