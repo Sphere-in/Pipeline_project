@@ -39,7 +39,7 @@
     ansible.builtin.apt:
       name: npm
       state: present
-      
+
   - name: Ensure app directory exists
     ansible.builtin.file:
       path: /var/www/myapp
@@ -48,12 +48,13 @@
 
   - name: Copy app files excluding node_modules using rsync
     ansible.builtin.synchronize:
-      src: ./  
+      src: ../  
       dest: /var/www/myapp/
       rsync_opts:
         - "--exclude=node_modules"
         - "--exclude=.git"
         - "--exclude=.env"
+        - "--exclude=terraform"
 
 
   - name: Install Node.js dependencies
