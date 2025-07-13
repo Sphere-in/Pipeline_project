@@ -72,7 +72,6 @@ pipeline{
 
                         echo "[web]" > hosts
                         echo "$(terraform -chdir=../terraform output -raw instance_ip)" ansible_user=ec2-user ansible_ssh_private_key_file=$PEM_FILE >> hosts
-                        cd /Ansible
                         ansible-playbook -i hosts playbook.yml
                         '''
                     }
