@@ -67,9 +67,10 @@
       cmd: npm run build
       chdir: /var/www/myapp
 
-  - name: Start Node.js App
-    ansible.builtin.command:
-      cmd: npm start
+  - name: Start Node.js App in background
+    ansible.builtin.shell: |
+      nohup npm start > /var/www/myapp/app.log 2>&1 &
+    args:
       chdir: /var/www/myapp
 
 
