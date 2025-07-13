@@ -45,6 +45,12 @@
     ansible.builtin.copy:
       src: ../
       dest: /var/www/myapp/
+      exclude: 
+        - node_modules
+        - .git
+        - terraform
+        - Jenkinsfile
+        - Ansible
       mode: '0755'
 
   - name: Install Node.js dependencies
