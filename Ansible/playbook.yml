@@ -19,8 +19,9 @@
       mode: '0644'
   
   - name: Restart Nginx
-    ansible.builtin.service:
+    ansible.builtin.systemd:
       name: nginx
-      restarted: yes
-      enabled: yes
+      state: restarted
+      enabled: true
+
 
