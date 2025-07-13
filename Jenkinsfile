@@ -84,12 +84,12 @@ pipeline{
             steps{
                 echo "Installing dependencies"
                 sh '''
-                if command -v node > dev/null 1>&2; then
+                if command -v node > /dev/null 1>&2; then
                     echo "Node JS Installed"
                 else
                     curl -fsSL https://raw.githubusercontent.com/mklement0/n-install/stable/bin/n-install | bash -s 22
-                    echo "Installing Nodejs"
-                    apt install -y nodejs
+                    
+                fi
                 '''
             }
         }
