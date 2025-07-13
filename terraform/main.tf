@@ -5,11 +5,6 @@ terraform {
       version = "5.58.0"
     }
   }
-  backend "s3" {
-    bucket = "my-pipeline-bucket-9372"
-    key    = "terraform.tfstate"
-    region = "eu-north-1"
-  }
 }
 provider "aws" {
   region = "eu-north-1"
