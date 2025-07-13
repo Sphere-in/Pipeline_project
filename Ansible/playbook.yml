@@ -43,7 +43,7 @@
 
   - name: Copy app files to remote server
     ansible.builtin.copy:
-      src: ./build/
+      src: ../
       dest: /var/www/myapp/
       mode: '0755'
 
@@ -56,8 +56,6 @@
     ansible.builtin.command:
       cmd: npm start
       chdir: /var/www/myapp
-
-    
 
 
   - name: Restart Nginx
